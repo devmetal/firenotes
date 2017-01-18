@@ -1,0 +1,7 @@
+.ui.copy-button {
+  cursor: pointer;
+}
+
+.ui.copy-button > .icon {
+  cursor: pointer;
+}
