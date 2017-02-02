@@ -13,15 +13,15 @@ type Props = {
   notes: Array<Object>,
 };
 
-class NotesPanel extends Component {
+export class NotesPanel extends Component {
   props: Props;
 
   onDeleteHandler = (id: number) => {
     this.props.dispatch(Actions.deleteNote(id));
   }
   
-  onToggleHandler = (id: number) => {
-    this.props.dispatch(Actions.toggleNote(id));
+  onToggleHandler = (id: number, closed: boolean) => {
+    this.props.dispatch(Actions.toggleNote(id, closed));
   }
 
   onForkHandler: (id: number) => void;
@@ -30,10 +30,12 @@ class NotesPanel extends Component {
     this.props.dispatch(Actions.addNote(title));
   }
   
-  onJoinHandler: (code: string) => void;
+  onJoinHandler = (code: string) => {
+    this.props.dispatch(Actions.joinNote(code));
+  }
 
   componentDidMount = () => {
-    this.props.dispatch(Actions.startListenToNotes());
+    this.props.dispatch(Actions.listenNotes());
   }
 
   render() {

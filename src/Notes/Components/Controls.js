@@ -9,7 +9,7 @@ type Props = {
   id: number,
   myOwn: boolean,
   closed: boolean,
-  onToggle: (id: number) => void,
+  onToggle: (id: number, closed: boolean) => void,
   onDelete: (id: number) => void,
   onFork: (id: number) => void,
 }
@@ -23,13 +23,13 @@ export default class Controls extends Component {
   };
 
   onToggleHandler = () => {
-    const { id } = this.props;
-    this.props.onToggle(id);
+    const { id, closed } = this.props;
+    this.props.onToggle(id, closed);
   };
 
   onForkHandler = () => {
-    const { id } = this.props;
-    this.props.onToggle(id);
+    const { id, closed } = this.props;
+    this.props.onToggle(id, closed);
   };
 
   render() {

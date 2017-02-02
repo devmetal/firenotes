@@ -14,7 +14,7 @@ type Props = {
   desc: string,
   code: string,
   id: number,
-  onToggle: (id: number) => void,
+  onToggle: (id: number, closed: boolean) => void,
   onFork: (id: number) => void,
   onDelete: (id: number) => void,
 };

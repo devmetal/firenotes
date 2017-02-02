@@ -5,7 +5,7 @@ import Note from './Note';
 
 type Props = {
   onDelete: (id: number) => void,
-  onToggle: (id: number) => void,
+  onToggle: (id: number, closed: boolean) => void,
   onFork: (id: number) => void,
   notes: Array<Object>,
 }

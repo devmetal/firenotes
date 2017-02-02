@@ -8,9 +8,10 @@ if (process.env.NODE_ENV === 'development') {
   middlewares.push(createLogger());
 }
 
-export default function() {
+export default function(initialState = {}) {
   return createStore(
     reducer,
+    initialState,
     applyMiddleware(...middlewares)
   );
 }

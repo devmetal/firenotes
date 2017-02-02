@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import NotesPanel from './Notes/NotesPanel';
 
-export default class NotesPage extends Component {
+export default class extends Component {
   render() {
     return (
       <NotesPanel />
