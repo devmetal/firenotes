@@ -7,12 +7,12 @@ import CopyCode from './CopyCode';
 import Controls from './Controls';
 
 type Props = {
+  loading: boolean,
   title: string,
   myOwn: boolean,
   notify: boolean,
   closed: boolean,
   desc: string,
-  code: string,
   id: number,
   onToggle: (id: number, closed: boolean) => void,
   onFork: (id: number) => void,
@@ -23,8 +23,12 @@ export default class Note extends Component {
   props: Props;
   
   render() {
-    const { title, myOwn, code, notify, closed, desc, id } = this.props;
+    const { loading, title, myOwn, notify, closed, desc, id } = this.props;
     const { onToggle, onFork, onDelete } = this.props;
+
+    if (loading === true) {
+      return null;
+    }
 
     return (
       <div className="card">
@@ -35,7 +39,7 @@ export default class Note extends Component {
           </div>
           {myOwn &&
             <div className="meta">
-              <CopyCode code={code} />
+              <CopyCode code={id} />
             </div>
           }
           <div className="description">

@@ -1,11 +1,12 @@
 import firebase from '../firebase';
 import uuid from 'uuid/v4';
 
+export const LIVE = 'LIVE';
 export const ADD_NOTE = 'ADD_NOTE';
-export const ADD_NOTES = 'ADD_NOTES';
 export const TOGGLE_NOTE = 'TOGGLE_NOTE';
 export const DELETE_NOTE = 'DELETE_NOTE';
 export const UPDATE_NOTE = 'UPDATE_NOTE';
+export const NOTE_VALUE = 'NOTE_VALUE';
 
 const database = firebase.database();
 
@@ -13,73 +14,61 @@ export const addNote = (title) => {
   return (dispatch, getState) => {
     const id = uuid();
 
-    const { auth: { user: {uid} }  } = getState();
+    const { auth: { user: {uid} } } = getState();
 
     const note = {
       id,
-      title,
       uid,
-      code: id,
-      created: new Date(),
+      title,
       desc: "",
-      myOwn: true,
       notify: false,
       closed: false,
+      createdAt: new Date().toISOString(),
     };
 
-    dispatch({ type: ADD_NOTE, note });
-    database.ref(`${uid}/notes/${id}`).set(note);
+    database.ref(`/notes/${id}`).set(note).then(() => {
+      return database.ref(`${uid}/notes`).push(id); 
+    });
   }
 };
 
-export const joinNote = (code) => {
-  return (dispatch, getState) => {
-    const { auth: { user: {uid} } } = getState();
-    database.ref('notes/' + code).child('joined').push(uid)
-  }
-};
-
-export const addNotes = (notes = []) => {
-  return { type: ADD_NOTES, notes };
-};
+export const joinNote = (code) => (dispatch, getState) => {
+  const { auth: { user: {uid} }  } = getState();
+  database.ref(`${uid}/joined`).push(code);
+}
 
 export const toggleNote = (id, closed) => {
-  return (dispatch, getState) => {
-    const { auth: { user: {uid} } } = getState();
-
-    dispatch({ type: TOGGLE_NOTE, id, closed });
-    database.ref(`${uid}/notes/${id}`).child('closed').set(!closed);
-  }
 };
 
 export const deleteNote = (id) => {
-  return (dispatch, getState) => {
-    const { auth: { user: {uid} } } = getState();
-    
-    dispatch({ type: DELETE_NOTE, id });
-    database.ref(`notes/${uid}/${id}`).remove();
-  }
 };
 
 export const updateNote = (note) => {
-  return { type: UPDATE_NOTE, id: note.id, note };
+}
+
+export const listenNote = (id) => (dispatch) => {
+  database.ref(`notes/${id}`).on('value', (snapshot) => {
+    const note = snapshot.val();
+    console.log(snapshot);
+    dispatch({type: NOTE_VALUE, id, note});
+  });
 }
 
 export const listenNotes = () => {
   return (dispatch, getState) => {
-    const { auth: { user: {uid} }  } = getState();
-    database.ref(`${uid}/notes`).once('value', (snapshot) => {
-      const notesObj = snapshot.val();
-      if (!notesObj) return;
+    const { auth: { user: {uid} } } = getState();
+    
+    const addNote = (snapshot) => {
+      const noteId = snapshot.val();
+      const note = { id: noteId };
 
-      const keys = Object.keys(notesObj);
-      const notes = keys.map(key => notesObj[key]);
-      dispatch(addNotes(notes));
-    });
+      dispatch({type: ADD_NOTE, note});
+      dispatch(listenNote(noteId));
+    }
 
-    database.ref(`${uid}/notes`).on('child_changed', (snapshot) => {
-      const note = snapshot.val();
-      dispatch(updateNote(note));
-    });
-  }
+    database.ref(`${uid}/notes`).on('child_added', addNote);
+    database.ref(`${uid}/joined`).on('child_added', addNote);
+
+    dispatch({type: LIVE});
+  };
 };

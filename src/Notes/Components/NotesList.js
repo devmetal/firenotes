@@ -18,6 +18,7 @@ export default class NotesList extends Component {
 
     const createNote = (note) => (
       <Note
+        loading={note.loading}
         onDelete={onDelete}
         onFork={onFork}
         onToggle={onToggle}

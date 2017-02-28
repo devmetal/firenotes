@@ -3,31 +3,38 @@
 import React, { Component } from 'react';
 import AuthRequested from './AuthRequested';
 import LoginContainer from './Auth/LoginContainer';
-import * as Actions from './Auth/LoginActions';
 import Navbar from './Navbar/Navbar';
 
+import type { User } from './types';
+
 type Props = {
-  children: Array<ReactClass<>>,
-  dispatch: Function,
+  children?: React.Element<*>,
+  logout: () => void,
+  login: () => void,
   auth: boolean,
-  user: Object,
+  user: User,
 }
 
-export class FireNotes extends Component {
-  props: Props;
-
-  onLogout = () => {
-    this.props.dispatch(Actions.logout());
-  }
-
+export class FireNotes extends Component<void, Props, void> {
   render() {
+    const { auth, user, logout, login } = this.props;
+
+    if (!auth) return <LoginContainer
+      auth={auth}
+      onLogin={login}
+      user={user}
+    />;
+
     return (
-      <div>
-        <Navbar onLogout={this.onLogout} auth={this.props.auth} user={this.props.user} />
+      <div className='fire-notes'>
+        <Navbar
+          onLogout={logout}
+          auth={auth}
+          user={user} />
         {this.props.children}
       </div>
     )
   }
 }
 
-export default AuthRequested(FireNotes, LoginContainer);
+export default AuthRequested(FireNotes);

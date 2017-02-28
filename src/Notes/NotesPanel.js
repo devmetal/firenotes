@@ -7,9 +7,11 @@ import Join from './Components/Join';
 import { connect } from 'react-redux';
 
 import * as Actions from './NotesActions';
+import { dateOrderNotes } from './NotesSelectors';
 
 type Props = {
   dispatch: Function,
+  watching: boolean,
   notes: Array<Object>,
 };
 
@@ -35,7 +37,9 @@ export class NotesPanel extends Component {
   }
 
   componentDidMount = () => {
-    this.props.dispatch(Actions.listenNotes());
+    if (!this.props.watching) {
+      this.props.dispatch(Actions.listenNotes());
+    }
   }
 
   render() {
@@ -60,7 +64,8 @@ export class NotesPanel extends Component {
 
 const mapStateToProps = (store) => {
   return {
-    notes: store.notes.notes,
+    notes: dateOrderNotes(store),
+    watching: store.notes.live,
   }
 };
 

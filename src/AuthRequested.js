@@ -4,36 +4,49 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as Actions from './Auth/LoginActions';
 
-function AuthRequested<T>(
-  ComposedComponent: ReactClass<T>,
-  LoginScreen: ReactClass<{}>
-): ReactClass<{}> {
+type InjectedProps = {
+  auth: boolean,
+  logout: () => void,
+}
 
+function AuthRequested<T: *>(
+  ComposedComponent: ReactClass < T & InjectedProps >,
+): ReactClass < T > {
   class AuthRequestedComponent extends Component {
-
-    componentDidMount() {
-      this.props.dispatch(Actions.startListenToAuth());
-    }
-
-    render() {
-      const { auth, loading } = this.props;
-      if (loading === true) {
-        return null;
-      } else if (auth !== true) {
-        return <LoginScreen />
-      } else {
-        return <ComposedComponent {...this.props} />
-      }
-    }
+  componentDidMount() {
+    this.props.listen();
   }
 
-  const mapStateToProps = ({ auth }) => ({
-    auth: auth.auth,
-    user: auth.user,
-    loading: auth.loading,
-  })
+  render() {
+    const { auth, loading, logout, login, ...rem} = this.props;
+    if (loading === true) {
+      return null;
+    }
 
-  return connect(mapStateToProps)(AuthRequestedComponent);
+    return (
+      <ComposedComponent
+        {...rem}
+        auth={auth}
+        logout={logout}
+        login={login}
+      />
+    )
+  }
+}
+
+const mapStateToProps = ({ auth }) => ({
+  auth: auth.auth,
+  user: auth.user,
+  loading: auth.loading,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  logout() { dispatch(Actions.logout()) },
+  login() { dispatch(Actions.startAuth()) },
+  listen() { dispatch(Actions.startListenToAuth()) },
+});
+
+return connect(mapStateToProps, mapDispatchToProps)(AuthRequestedComponent);
 }
 
 export default AuthRequested;

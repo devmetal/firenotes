@@ -2,3 +2,5 @@
 ./node_modules/fbjs/.*
 .*/node_modules/findup/.*
 .*/node_modules/config-chain/.*
+.*/node_modules/enzyme-matchers/.*
+.*/node_modules/jest-enzyme/.*

@@ -14,10 +14,10 @@ export default class extends Component {
 
   render() {
     return (
-      <div className="ui top menu">
+      <div className="ui top menu navbar">
         <HeaderItem text="Fire In the notes" />
         <TextItem text={this.props.user.email} />
-        <LinkItem text="Logout" onClick={this.props.onLogout} />
+        <LinkItem className='logout' text="Logout" onClick={this.props.onLogout} />
       </div>
     )
   }
