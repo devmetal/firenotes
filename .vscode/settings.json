@@ -1,6 +1,5 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "flow.path": "node_modules/.bin/flow",
-"javascript.validate.enable": false,
-"vsicons.presets.angular": false
+  "vsicons.presets.angular": false,
+  "eslint.enable": false
 }
